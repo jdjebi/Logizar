@@ -1,74 +1,17 @@
 import os
 import re
-import utils
-from cutils import *
 import sys
 
-# Assure que le dossier root est bien celui du script pour garantir les liaisons relatives
-app_origin_dir = sys.path[1]
-os.chdir(app_origin_dir)
-
-# Définition des constantes
-DATA_DIR = os.path.abspath("data\\")
-
-PROJECTS_FILE_PATH = os.path.join(DATA_DIR,"projects")
+from cutils import *
+from core import utils
+from core import func
+from core.cli import CliManager
 
 DEFAULT_PROJECTS_DIR = [
 	"C:\\Users\\samsung\\Desktop\\Dev2",
 	"C:\\wamp64\\www",
 	"C:\\Users\\samsung\\dev"
 ]
-
-LGZ_PROJECTS_FILE = os.path.abspath('data\\dirs.lgz')
-
-class lgzManager:
-	""" Classe pour la gestion des dossier lgz """
-	def __init__(self):
-		self.lgz_dirs = []
-		self.lgz_dirs_name = {} # [Nom du dossier] = indice du dossier 
-		self.update()
-
-	def update(self):
-		""" Met à jour la liste des dossiers lgz"""
-		self.lgz_dirs = self.get_dirs()
-
-	def get_dir(self,index):
-		""" Retourne un projet hébergeable enregistré """
-		try:
-			# Retourne à partie de l'index du dossier
-			return self.lgz_dirs[index - 1]
-		except TypeError:
-			# Retourne à partir du nom dossier
-			return self.lgz_dirs[self.lgz_dirs_name[index.lower()]]
-
-	def get_dirs(self):
-		""" Retourne la liste des projets hébergeable issus du scanne """
-		lgz_file = open(LGZ_PROJECTS_FILE,mode="r",encoding="utf-8")
-		lgz_dirs = []
-		for i, path in enumerate(lgz_file.readlines()):
-			path = utils.safe_line(path)
-			dirname = os.path.basename(path)
-			index = i+1
-			# On enregistre l'indice du dossier dans un dictionnaire avec pour clée son nom
-			self.lgz_dirs_name[dirname.lower()] = i
-			lgz_dirs.append((index,dirname,path))
-		lgz_file.close()
-		return lgz_dirs
-
-
-class CliManager:
-	def __init__(self):
-		self.lgz = lgzManager()
-	
-	def init(self):
-		self.lgz.update()
-
-	def os_exec(cls,cmd):
-		""" Execute les commandes contenu dans cmd_list """
-		if cmd[0] != "#":
-			os.system(cmd)
-
-""" Fonctions """
 
 """ Commandes """
 def list2():
@@ -104,7 +47,7 @@ def open_lgz_by_name(name):
 		path = ldir[2]
 		os.system("start {}".format(path))
 	except KeyError:
-		print("{} introuvable.".format(name))
+		print('Dossier "{}" introuvable. Les dossiers disponibles sont listés ci-dessous.\n'.format(name))
 		list3()
 
 
@@ -147,7 +90,8 @@ def scan():
 	for current_dir in DEFAULT_PROJECTS_DIR:
 		print("Scanne du dossier de projets:", current_dir)
 		for (root,dirs,files) in os.walk(current_dir, topdown=True): 
-			if "todo.md" in files:
+			#print("\t",root,files)
+			if "todo.md" in files or "zar" in files:
 				nbr_lgz_dir += 1
 				lgz_dir.append(root)
 			#print(root,files,"<br>",file=f)
@@ -158,21 +102,35 @@ def scan():
 	print("\nFin du scanne. {} dossier(s) hébergeable trouvé.\n".format(nbr_lgz_dir))
 	utils.show_list(lgz_dir)
 
-	with open(LGZ_PROJECTS_FILE, mode="w", encoding="utf-8") as file:
+	with open(Manager.config.get("LGZ_PROJECTS_FILE"), mode="w", encoding="utf-8") as file:
 		for dir in lgz_dir:
 			print(dir,file=file)
 
 	Manager.lgz.update() # Mise à jour des dossiers lgz du Manager
 
+def shell(key_str):
+	""" Lance un terminal sur le dossier spécifié """
+
+	try:
+		key = int(key_str)
+	except ValueError:
+		key = key_str
+
+	lgz_dir = Manager.lgz.get_dir(key)
+
+	func.start_terminal(lgz_dir[2])
+
+def terminal_cmd(cmd):
+	""" Execute une commande du terminal windows """
+	os.system(cmd)
+
 
 """ App """
-Manager = CliManager()
-
 def kernel_cli(cmd=""):
 	""" Execution de la commande """
 
 	if cmd == "exit":
-		exit()
+		sys.exit()
 
 	elif cmd == "cls":
 		clear()
@@ -182,10 +140,18 @@ def kernel_cli(cmd=""):
 
 	elif cmd == "list3":
 		list3()
-		#exit()
 
 	elif cmd == "scan":
 		scan()
+
+	elif re.match("^cmd: (.)+",cmd):
+		terminal_cmd(cmd[4:])
+
+	elif re.match("^shell: ((.)|[0-9])+",cmd):
+		shell(cmd[7:])
+
+	elif re.match("^ignore: ((.)|[0-9])+",cmd):
+		ignore(cmd)
 
 	elif re.match("^open: [0-9]+",cmd):
 		open_lgz_by_id(cmd[6:])
@@ -212,8 +178,17 @@ def console_cli(args):
 	cmd = " ".join(args)
 	kernel_cli(cmd)
 
-		
+
+""" App """
+
+# Récupération du chemin du dossier de la cli
+app_origin_dir = sys.path[1]
+
+Manager = CliManager(app_origin_dir)
+
 if __name__ == "__main__":	
+
+	# Assure que le dossier root est bien celui du script pour garantir les liaisons relatives
 
 	Manager.init()
 
