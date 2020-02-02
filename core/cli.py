@@ -1,6 +1,12 @@
 import os
 from .lgzmanager import lgzManager
 
+DEFAULT_PROJECTS_DIR = [
+	"C:\\Users\\samsung\\Desktop\\Dev2",
+	"C:\\wamp64\\www",
+	"C:\\Users\\samsung\\dev"
+]
+	
 class CliManagerConfig:
 	""" classe en charge de la sauvegarde des constantes """
 	DATA_DIR = None
@@ -39,6 +45,7 @@ class CliManager:
 	def __init__(self,app_origin_dir):
 
 		# Défini le dossier de travail, celui du cli
+
 		os.chdir(app_origin_dir)
 
 		# Initialisation des variables globale

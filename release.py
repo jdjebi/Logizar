@@ -9,5 +9,5 @@ setup(
 	version="0.0.1",
 	description="Terminal de controle Logizar",
 	build_exe=build_exe_options,
-	executables= [Executable("lgz_debug.py",targetName="lgz0.exe")]
+	executables= [Executable("lgz_debug.py",targetName="lgz.exe")]
 )

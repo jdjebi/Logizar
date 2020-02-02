@@ -6,7 +6,7 @@ from core import func
 default_cmd = ""
 
 # Récupération du chemin du dossier de la cli
-app_origin_dir = func.get_app_root_dir(func.RELEASE)
+app_origin_dir = func.get_app_root_dir(func.DEBUG)
 
 Manager = CliManager(app_origin_dir)
 

@@ -9,18 +9,30 @@ class lgzManager:
 		self.CLI = cli
 		self.update()
 
+	@classmethod
+	def safe_key(cls,key):
+		""" Converti key entier si il l'est """
+		try:
+			key = int(key)
+		except ValueError:
+			pass
+		return key
+
 	def update(self):
 		""" Met à jour la liste des dossiers lgz"""
 		self.lgz_dirs = self.get_dirs()
 
+	def get_index_type(self,index):
+		return index.__class__.__name__
+
 	def get_dir(self,index):
 		""" Retourne un projet hébergeable enregistré """
-		try:
-			# Retourne à partie de l'index du dossier
-			return self.lgz_dirs[index - 1]
-		except TypeError:
-			# Retourne à partir du nom dossier
+		index = self.safe_key(index)
+
+		if self.get_index_type(index) == "str":
 			return self.lgz_dirs[self.lgz_dirs_name[index.lower()]]
+		else:
+			return self.lgz_dirs[index - 1]
 
 	def get_dirs(self):
 		""" Retourne la liste des projets hébergeable issus du scanne """

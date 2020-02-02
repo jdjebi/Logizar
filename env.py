@@ -1,1 +1,3 @@
-RELEASE = True
+DEBUG = "DEBUG"
+RELEASE = "RELEASE"
+
