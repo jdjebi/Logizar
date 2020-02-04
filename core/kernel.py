@@ -7,6 +7,7 @@ from commands.list import List
 from commands.open import Open
 from commands.cmd import Cmd
 from commands.scan import Scan
+from commands.get import Get
 
 def kernel_cli(manager,cmd=""):
 	""" Execution de la commande """
@@ -37,6 +38,9 @@ def kernel_cli(manager,cmd=""):
 
 	elif args[0] == "shell":
 		Shell(manager,sub_args).execute()
+
+	elif args[0] == "get":
+		Get(manager,sub_args).execute()
 
 	else:
 		print("Commande inconnue")

@@ -23,6 +23,7 @@
 - Créer une commande pour ignorer un dossier lgz ignore: [Nom dossier]
 - Gérer le cas de la non existence du dossier data/ 0.0.2
 - Pour le commande Run il n'y a pas de gestion d'intégrité des données
+Créer une commande get qui retourne le chemin vers un dossier ou qui met un chemin directement dans le presse papier
 
 
 ## BRAINSTRORMING
@@ -43,13 +44,13 @@ Pour mettre à jour la liste des dossiers lgz il faut lancer la commande [scan]
 
 ## COMMANDES
 
-- ^open: [0-9]+ :: Commande pour ouvrir un dossier de projet enregistré suite à un scanne à partir de son id
-- ^open2: (.)+ :: Commande pour ouvrir un dossier de projet enregistré suite à un scanne à partir du nom du dossier
-- ^scan :: Recherche les dossiers lgz dans les dossiers de projet. Une fois l'ensemble des projets trouvés ces derniers sont enregistrés dans le fichier data/projers.lgz. Un dossier lgz possède un fichier zar ou todo.md à sa racine
-- ^list :: Affiche la liste des dossiers lgz
-- ^shell: ((.)|[0-9])+ :: Lance un terminal sur le dossier spécifié en paramètre
-- ^cmd: (.)+ :: Execute les paramètres comme étant une commande du terminal windows
-- ^run: ((.)|[0-9])+ :: Lance la chaine d'exécution du dossier lgz passer en paramètre
+- open (.)+          :: Commande pour ouvrir un dossier de projet enregistré suite à un scanne à partir du nom ou de l'id du dossier
+- scan               :: Recherche les dossiers lgz dans les dossiers de projet. Une fois l'ensemble des projets trouvés ces derniers sont enregistrés dans le fichier data/projers.lgz. Un dossier lgz possède un fichier zar ou todo.md à sa racine
+- list               :: Affiche la liste des dossiers lgz
+- shell ((.)|[0-9])+ :: Lance un terminal sur le dossier spécifié en paramètre
+- cmd (.)+           :: Execute les paramètres comme étant une commande du terminal windows
+- run ((.)|[0-9])+   :: Lance la chaine d'exécution du dossier lgz passer en paramètre
+- get ((.)|[0-9])+    :: Affiche le chemin vers le dossier spécifié en paramètre
 
 
 ### Version 0.0.1
